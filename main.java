@@ -2,6 +2,9 @@ import com.sun.net.httpserver.Request;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.io.File;
+import jxl.Workbook;
+import jxl.write.*;
 
 class red_requisitos{
 	String ip;
@@ -61,17 +64,32 @@ class ventana_flsm{
 
 
 public class main{
-	public static void main(String[] args){
-		Scanner entra = new Scanner(System.in);
-		ventana_vlsm vlsm = new ventana_vlsm();
-		ventana_flsm flsm = new ventana_flsm();
-		red_requisitos p1 = new red_requisitos("192.168.32.0", 24, "6,30/3,6/1,2");
-		red_requisitos p2 = new red_requisitos("10.20.30.0", 20, "6");
+        public static void main(String[] args) throws Exception{
+                Scanner entra = new Scanner(System.in);
+                ventana_vlsm vlsm = new ventana_vlsm();
+                ventana_flsm flsm = new ventana_flsm();
+                red_requisitos p1 = new red_requisitos("192.168.32.0", 24, "6,30/3,6/1,2");
+                red_requisitos p2 = new red_requisitos("10.20.30.0", 20, "6");
 		System.out.println(p1.obtener_ip());
 		System.out.println(p1.obtener_prefijo());
 		System.out.println(p1.obtener_requisitos());
 		System.out.println(p2.obtener_ip());
 		System.out.println(p2.obtener_prefijo());
-		System.out.println(p2.obtener_requisitos());
-	}
+                System.out.println(p2.obtener_requisitos());
+
+                // Crear archivo Excel con las subredes
+                WritableWorkbook workbook = Workbook.createWorkbook(new File("subredes.xls"));
+                WritableSheet sheet = workbook.createSheet("Subredes", 0);
+                sheet.addCell(new Label(0, 0, "IP"));
+                sheet.addCell(new Label(1, 0, "Prefijo"));
+                sheet.addCell(new Label(2, 0, "Requisitos"));
+                sheet.addCell(new Label(0, 1, p1.ip));
+                sheet.addCell(new Number(1, 1, p1.obtener_prefijo()));
+                sheet.addCell(new Label(2, 1, p1.requisitos));
+                sheet.addCell(new Label(0, 2, p2.ip));
+                sheet.addCell(new Number(1, 2, p2.obtener_prefijo()));
+                sheet.addCell(new Label(2, 2, p2.requisitos));
+                workbook.write();
+                workbook.close();
+        }
 }
